@@ -1,5 +1,6 @@
 require 'gosu'
 require 'boozers/window'
+require 'boozers/player'
 require 'boozers/game'
 
 module Boozers

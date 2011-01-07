@@ -1,8 +1,8 @@
 module Boozers
   class Window < Gosu::Window
     def initialize
-      super 640, 480, false
-      @triangles = []
+      super 1024, 768, false
+      @player = Player.new 0, 0, Gosu::Color::RED
     end
 
     def needs_cursor?() true end
@@ -14,26 +14,21 @@ module Boozers
         puts "Exiting..."
         close
       when Gosu::MsLeft
-        @triangles << [mouse_x, mouse_y, Gosu::Color::RED]
-        @down_time = Time.now
-        puts "#{mouse_x}, #{mouse_y}"
+        @player.move_to(mouse_x, mouse_y)
       end
     end
 
     def button_up id
-      if id == Gosu::MsLeft
-        @triangles << [mouse_x, mouse_y, Gosu::Color::BLUE]
-        puts "Held for: #{Time.now - @down_time}"
-      end
     end
 
     def update
+      @player.tick!
     end
     
     def draw
-      @triangles.each do |(x, y, c)|
-        draw_triangle x-30, y+30, c, x+30, y+30, c, x, y-30, c
-      end
+      draw_triangle(@player.x-@player.height, @player.y+@player.height, @player.color,
+                    @player.x+@player.height, @player.y+@player.height, @player.color,
+                    @player.x, @player.y-@player.height, @player.color)
     end
   end
 end
