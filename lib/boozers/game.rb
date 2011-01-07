@@ -1,4 +1,4 @@
-module Boozer
+module Boozers
   class Game
 
   end
