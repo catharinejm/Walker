@@ -2,10 +2,19 @@ require 'gosu'
 
 class Sam < Gosu::Window
   STEP = 5
-  CHAR_HT = 50
+  CHAR_HT = 300.0
+  SWIDTH = 1024
+  SHEIGHT = 768
+  ZMIN = 228 # arbitrary? Need to figure out what this is. Or not.
+  ZMAX = ZMIN+384
+  RATIO = SWIDTH/SHEIGHT.to_f
+  FOV_X = 120 * Math::PI/180
+  FOV_Y = FOV_X/RATIO
+
   def initialize
-    super 1024, 768, false
-    @x = @y = @z = 0
+    super SWIDTH, SHEIGHT, false
+    @x = 0
+    @z = ZMIN
   end
 
   def needs_cursor?() true end
@@ -41,29 +50,37 @@ class Sam < Gosu::Window
   def update
     @x += STEP if @right
     @x -= STEP if @left
-    @z -= STEP if @up
-    @z += STEP if @down
+    @z += STEP if @up
+    @z -= STEP if @down
 
-    puts "x: #@x, y: #@y, z: #@z"
+    @z = ZMIN if @z < ZMIN
+    @z = ZMAX if @z > ZMAX
+    @x = -width/2.0 if @x < -width/2.0
+    @x = width/2.0 if @x > width/2.0
+
+    puts "x: #@x, z: #@z"
   end
 
-  def screen_x offset=0
-    @x + offset + width/2.0
+  def screen_x x, z
+    x * width/2.0/(z*Math.tan(FOV_X/2.0)) + width / 2.0
   end
 
-  def screen_y offset=0
-    height - @y - offset
-  end
-
-  def screen_z offset=0
-    @z + offset
+  def screen_y y, z
+    ((height/2.0-y) * height/2.0/(z*Math.tan(FOV_Y/2.0)) + height/2.0)/RATIO
   end
 
   def draw
     c = Gosu::Color::RED
+    b = Gosu::Color::BLUE
+
+    draw_quad(
+      screen_x(-512, ZMIN), screen_y(0, ZMIN), b,
+      screen_x(512, ZMIN), screen_y(0, ZMIN), b,
+      screen_x(-512, ZMAX), screen_y(0, ZMAX), b,
+      screen_x(512, ZMAX), screen_y(0, ZMAX), b)
     draw_triangle(
-      screen_x, screen_y, c,
-      screen_x(CHAR_HT), screen_y, c,
-      screen_x(CHAR_HT/2), screen_y(CHAR_HT), c)
+      screen_x(@x-CHAR_HT/2, @z), screen_y(0, @z), c,
+      screen_x(@x+CHAR_HT/2, @z), screen_y(0, @z), c,
+      screen_x(@x, @z), screen_y(CHAR_HT, @z), c)
   end
 end
