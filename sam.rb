@@ -89,10 +89,10 @@ class Sam < Gosu::Window
     clear = Gosu::Color::WHITE
 
     draw_quad(
-      screen_x(-512, ZMIN), screen_y(0, ZMIN), b,
-      screen_x(512, ZMIN), screen_y(0, ZMIN), b,
-      screen_x(-512, ZMIN+384), screen_y(0, ZMIN+384), b,
-      screen_x(512, ZMIN+384), screen_y(0, ZMIN+384), b)
+      screen_x(-width/2.0, ZMIN), screen_y(0, ZMIN), b,
+      screen_x(width/2.0, ZMIN), screen_y(0, ZMIN), b,
+      screen_x(-width/2.0, ZMIN+height/2.0), screen_y(0, ZMIN+height/2.0), b,
+      screen_x(width/2.0, ZMIN+height/2.0), screen_y(0, ZMIN+height/2.0), b)
 
     image.draw_as_quad(
       screen_x(@x-CHAR_HT/2, @z), screen_y(CHAR_HT, @z), clear,
