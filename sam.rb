@@ -14,6 +14,7 @@ class Sam < Gosu::Window
     super SWIDTH, SHEIGHT, false
     @x = @dest_x = 0
     @z = @dest_z = ZMIN
+    @xstep = @zstep = 0
 
     @images = Gosu::Image.load_tiles(self, "player.png", -2, -4, false)
   end
@@ -25,8 +26,24 @@ class Sam < Gosu::Window
     when Gosu::KbEscape
       close
     when Gosu::MsLeft
-      @dest_x = world_x(mouse_x, mouse_y)
-      @dest_z = world_z(mouse_y)
+      y = mouse_y
+      y = height/2.0+0.1 if y < height/2.0
+      @dest_x = world_x(mouse_x, y)
+      @dest_z = world_z(y)
+
+      @dest_x = -width/2.0 if @dest_x < -width/2.0
+      @dest_x = width/2.0 if @dest_x > width/2.0
+      @dest_z = ZMIN if @dest_z < ZMIN
+      @dest_z = world_z(screen_y(0, ZMIN+height/2.0)) if @dest_z > world_z(screen_y(0, ZMIN+height/2.0))
+
+      dz = (@dest_z-@z).abs
+      dx = (@dest_x-@x).abs
+      @zstep = dz/(dz+dx)*STEP
+      @xstep = dx/(dz+dx)*STEP
+
+      puts
+      puts "x: #@x, dest_x: #@dest_x, z: #@z, dest_z: #@dest_z"
+      puts "dx: #{dx}, xstep: #@xstep, dz: #{dz}, zstep: #@zstep"
     end
     @start_moving = Time.now
     @step = 0
@@ -36,31 +53,27 @@ class Sam < Gosu::Window
   end
 
   def update
-    if @dest_x > @x + STEP
-      @x += STEP
-    elsif @dest_x < @x - STEP
-      @x -= STEP
-    elsif (@dest_x - @x).abs < STEP
+    if (@dest_x - @x).abs <= @xstep
       @x = @dest_x
+    elsif @dest_x > @x
+      @x += @xstep
+    elsif @dest_x < @x
+      @x -= @xstep
     end
-    if @dest_z > @z + STEP
-      @z += STEP
-    elsif @dest_z < @z - STEP
-      @z -= STEP
-    elsif (@dest_z - @z).abs < STEP
+    if (@dest_z - @z).abs <= @zstep
       @z = @dest_z
+    elsif @dest_z > @z
+      @z += @zstep
+    elsif @dest_z < @z
+      @z -= @zstep
     end
-
-    @z = ZMIN if @z < ZMIN
-    @x = -width/2.0 if @x < -width/2.0
-    @x = width/2.0 if @x > width/2.0
 
     if Time.now.to_f - @start_moving.to_f > 0.2
       @step = @step.to_i + 1 
       @start_moving = Time.now
     end
 
-    puts "x: #@x, z: #@z"
+    # puts "x: #@x, dest_x: #@dest_x, z: #@z, dest_z: #@dest_z"
   end
 
   def screen_x wx, wz
