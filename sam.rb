@@ -12,8 +12,8 @@ class Sam < Gosu::Window
 
   def initialize
     super SWIDTH, SHEIGHT, false
-    @x = 0
-    @z = ZMIN
+    @x = @dest_x = 0
+    @z = @dest_z = ZMIN
 
     @images = Gosu::Image.load_tiles(self, "player.png", -2, -4, false)
   end
@@ -24,37 +24,32 @@ class Sam < Gosu::Window
     case key
     when Gosu::KbEscape
       close
-    when Gosu::KbLeft
-      @left = true
-    when Gosu::KbRight
-      @right = true
-    when Gosu::KbUp
-      @up = true
-    when Gosu::KbDown
-      @down = true
+    when Gosu::MsLeft
+      @dest_x = world_x(mouse_x, mouse_y)
+      @dest_z = world_z(mouse_y)
     end
     @start_moving = Time.now
     @step = 0
   end
 
   def button_up key
-    case key
-    when Gosu::KbLeft
-      @left = false
-    when Gosu::KbRight
-      @right = false
-    when Gosu::KbUp
-      @up = false
-    when Gosu::KbDown
-      @down = false
-    end
   end
 
   def update
-    @x += STEP if @right
-    @x -= STEP if @left
-    @z += STEP if @up
-    @z -= STEP if @down
+    if @dest_x > @x + STEP
+      @x += STEP
+    elsif @dest_x < @x - STEP
+      @x -= STEP
+    elsif (@dest_x - @x).abs < STEP
+      @x = @dest_x
+    end
+    if @dest_z > @z + STEP
+      @z += STEP
+    elsif @dest_z < @z - STEP
+      @z -= STEP
+    elsif (@dest_z - @z).abs < STEP
+      @z = @dest_z
+    end
 
     @z = ZMIN if @z < ZMIN
     @x = -width/2.0 if @x < -width/2.0
@@ -73,7 +68,15 @@ class Sam < Gosu::Window
   end
 
   def screen_y wy, wz
-    height - ((wy-height/2.0)*ZMIN/wz) - height/2.0
+    height/2.0 - ((wy-height/2.0)*ZMIN/wz)
+  end
+
+  def world_x sx, sy, wy=0
+    (sx-width/2.0)*(wy-height/2.0) / (height/2.0 - sy)
+  end
+
+  def world_z sy, wy=0
+    (wy-height/2.0)*ZMIN / (height/2.0 - sy)
   end
 
   def image
