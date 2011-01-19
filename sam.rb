@@ -94,14 +94,14 @@ class Sam < Gosu::Window
       screen_x(-512, ZMIN+384), screen_y(0, ZMIN+384), b,
       screen_x(512, ZMIN+384), screen_y(0, ZMIN+384), b)
 
-    # image.draw_as_quad(
-    #   screen_x(@x-CHAR_HT/2, @z), screen_y(CHAR_HT, @z), clear,
-    #   screen_x(@x+CHAR_HT/2, @z), screen_y(CHAR_HT, @z), clear,
-    #   screen_x(@x-CHAR_HT/2, @z), screen_y(0, @z), clear,
-    #   screen_x(@x+CHAR_HT/2, @z), screen_y(0, @z), clear, @z)
-    draw_triangle(
-      screen_x(@x-CHAR_HT/2, @z), screen_y(0, @z), c,
-      screen_x(@x+CHAR_HT/2, @z), screen_y(0, @z), c,
-      screen_x(@x, @z), screen_y(CHAR_HT, @z), c)
+    image.draw_as_quad(
+      screen_x(@x-CHAR_HT/2, @z), screen_y(CHAR_HT, @z), clear,
+      screen_x(@x+CHAR_HT/2, @z), screen_y(CHAR_HT, @z), clear,
+      screen_x(@x-CHAR_HT/2, @z), screen_y(0, @z), clear,
+      screen_x(@x+CHAR_HT/2, @z), screen_y(0, @z), clear, @z)
+    # draw_triangle(
+    #   screen_x(@x-CHAR_HT/2, @z), screen_y(0, @z), c,
+    #   screen_x(@x+CHAR_HT/2, @z), screen_y(0, @z), c,
+    #   screen_x(@x, @z), screen_y(CHAR_HT, @z), c)
   end
 end
