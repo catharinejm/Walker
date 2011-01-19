@@ -5,11 +5,10 @@ class Sam < Gosu::Window
   CHAR_HT = 300.0
   SWIDTH = 1024
   SHEIGHT = 768
-  ZMIN = 228 # arbitrary? Need to figure out what this is. Or not.
-  ZMAX = ZMIN+384
   RATIO = SWIDTH/SHEIGHT.to_f
-  FOV_X = 120 * Math::PI/180
+  FOV_X = 100 * Math::PI/180
   FOV_Y = FOV_X/RATIO
+  ZMIN = SWIDTH/2.0/Math.tan(FOV_X/2.0)
 
   def initialize
     super SWIDTH, SHEIGHT, false
@@ -58,7 +57,6 @@ class Sam < Gosu::Window
     @z -= STEP if @down
 
     @z = ZMIN if @z < ZMIN
-    @z = ZMAX if @z > ZMAX
     @x = -width/2.0 if @x < -width/2.0
     @x = width/2.0 if @x > width/2.0
 
@@ -70,12 +68,12 @@ class Sam < Gosu::Window
     puts "x: #@x, z: #@z"
   end
 
-  def screen_x x, z
-    x * width/2.0/(z*Math.tan(FOV_X/2.0)) + width / 2.0
+  def screen_x wx, wz
+    wx*ZMIN/wz + width/2.0
   end
 
-  def screen_y y, z
-    ((height/2.0-y) * height/2.0/(z*Math.tan(FOV_Y/2.0)) + height/2.0)/RATIO
+  def screen_y wy, wz
+    height - ((wy-height/2.0)*ZMIN/wz) - height/2.0
   end
 
   def image
@@ -93,17 +91,17 @@ class Sam < Gosu::Window
     draw_quad(
       screen_x(-512, ZMIN), screen_y(0, ZMIN), b,
       screen_x(512, ZMIN), screen_y(0, ZMIN), b,
-      screen_x(-512, ZMAX), screen_y(0, ZMAX), b,
-      screen_x(512, ZMAX), screen_y(0, ZMAX), b)
+      screen_x(-512, ZMIN+384), screen_y(0, ZMIN+384), b,
+      screen_x(512, ZMIN+384), screen_y(0, ZMIN+384), b)
 
-    image.draw_as_quad(
-      screen_x(@x-CHAR_HT/2, @z), screen_y(CHAR_HT, @z), clear,
-      screen_x(@x+CHAR_HT/2, @z), screen_y(CHAR_HT, @z), clear,
-      screen_x(@x-CHAR_HT/2, @z), screen_y(0, @z), clear,
-      screen_x(@x+CHAR_HT/2, @z), screen_y(0, @z), clear, @z)
-    # draw_triangle(
-    #   screen_x(@x-CHAR_HT/2, @z), screen_y(0, @z), c,
-    #   screen_x(@x+CHAR_HT/2, @z), screen_y(0, @z), c,
-    #   screen_x(@x, @z), screen_y(CHAR_HT, @z), c)
+    # image.draw_as_quad(
+    #   screen_x(@x-CHAR_HT/2, @z), screen_y(CHAR_HT, @z), clear,
+    #   screen_x(@x+CHAR_HT/2, @z), screen_y(CHAR_HT, @z), clear,
+    #   screen_x(@x-CHAR_HT/2, @z), screen_y(0, @z), clear,
+    #   screen_x(@x+CHAR_HT/2, @z), screen_y(0, @z), clear, @z)
+    draw_triangle(
+      screen_x(@x-CHAR_HT/2, @z), screen_y(0, @z), c,
+      screen_x(@x+CHAR_HT/2, @z), screen_y(0, @z), c,
+      screen_x(@x, @z), screen_y(CHAR_HT, @z), c)
   end
 end
