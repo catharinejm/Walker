@@ -19,7 +19,7 @@ class World < Gosu::Window
     @xstep = @zstep = 0
     @directions = OpenStruct.new :x => :left, :z => :down
 
-    @objects = [WorldObject.new(100, 100, 100, 400, 400)]
+    @objects = [WorldObject.new(self, 100, 100, 100, 400, 400)]
 
     @images = Gosu::Image.load_tiles(self, "player.png", -2, -4, false)
   end
@@ -75,8 +75,6 @@ class World < Gosu::Window
       @step = !@step
       @start_moving = Time.now
     end
-
-    # puts "x: #@x, dest_x: #@dest_x, z: #@z, dest_z: #@dest_z"
   end
 
   def screen_x wx, wz
@@ -113,14 +111,14 @@ class World < Gosu::Window
 
   def image
     case direction
-    when :left 
-      @images[6+(@step ? 1 : 0)]
+    when :down 
+      @images[0+(@step ? 1 : 0)]
     when :up 
       @images[2+(@step ? 1 : 0)]
     when :right 
       @images[4+(@step ? 1 : 0)]
     else
-      @images[0+(@step ? 1 : 0)]
+      @images[6+(@step ? 1 : 0)]
     end
   end
 
