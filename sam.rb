@@ -41,9 +41,8 @@ class Sam < Gosu::Window
       @zstep = dz/(dz+dx)*STEP
       @xstep = dx/(dz+dx)*STEP
 
-      puts
-      puts "x: #@x, dest_x: #@dest_x, z: #@z, dest_z: #@dest_z"
-      puts "dx: #{dx}, xstep: #@xstep, dz: #{dz}, zstep: #@zstep"
+      printf "x:  %8.3f, dest_x: %8.3f, z:  %8.3f, dest_z: %8.3f\n", @x, @dest_x, @z, @dest_z
+      printf "dx: %8.3f, xstep:  %8.3f, dz: %8.3f, zstep:  %8.3f\n\n", dx, @xstep, dz, @zstep
     end
     @start_moving = Time.now
     @step = 0
