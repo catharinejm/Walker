@@ -6,7 +6,7 @@ class Sam < Gosu::Window
   SWIDTH = 1024
   SHEIGHT = 768
   RATIO = SWIDTH/SHEIGHT.to_f
-  FOV_X = 100 * Math::PI/180
+  FOV_X = 80 * Math::PI/180
   FOV_Y = FOV_X/RATIO
   ZMIN = SWIDTH/2.0/Math.tan(FOV_X/2.0)
 
@@ -15,6 +15,7 @@ class Sam < Gosu::Window
     @x = @dest_x = 0
     @z = @dest_z = ZMIN
     @xstep = @zstep = 0
+    @directions = {:x => :left, :z => :down}
 
     @images = Gosu::Image.load_tiles(self, "player.png", -2, -4, false)
   end
@@ -34,7 +35,7 @@ class Sam < Gosu::Window
       @dest_x = -width/2.0 if @dest_x < -width/2.0
       @dest_x = width/2.0 if @dest_x > width/2.0
       @dest_z = ZMIN if @dest_z < ZMIN
-      @dest_z = world_z(screen_y(0, ZMIN+height/2.0)) if @dest_z > world_z(screen_y(0, ZMIN+height/2.0))
+      @dest_z = ZMIN+512 if @dest_z > ZMIN+512
 
       dz = (@dest_z-@z).abs
       dx = (@dest_x-@x).abs
@@ -67,7 +68,7 @@ class Sam < Gosu::Window
       @z -= @zstep
     end
 
-    if Time.now.to_f - @start_moving.to_f > 0.2
+    if Time.now.to_f - @start_moving.to_f > 0.3
       @step = @step.to_i + 1 
       @start_moving = Time.now
     end
@@ -91,11 +92,39 @@ class Sam < Gosu::Window
     (wy-height/2.0)*ZMIN / (height/2.0 - sy)
   end
 
+  def direction
+    @directions[:x] =
+      if @dest_x < @x
+        :left
+      elsif @dest_x > @x
+        :right
+      else
+        @directions[:x]
+      end
+
+    @directions[:z] =
+      if @dest_z < @z
+        :down
+      elsif @dest_z > @z
+        :up
+      else
+        @directions[:z]
+      end
+
+    @xstep > (@zstep * 2) ? @directions[:x] : @directions[:z]
+  end
+
   def image
-    return @images[6+@step%2] if @left
-    return @images[2+@step%2] if @up
-    return @images[4+@step%2] if @right
-    @images[0+@step%2]
+    case direction
+    when :left 
+      @images[6+@step%2]
+    when :up 
+      @images[2+@step%2]
+    when :right 
+      @images[4+@step%2]
+    else
+      @images[0+@step%2]
+    end
   end
 
   def draw
@@ -106,8 +135,8 @@ class Sam < Gosu::Window
     draw_quad(
       screen_x(-width/2.0, ZMIN), screen_y(0, ZMIN), b,
       screen_x(width/2.0, ZMIN), screen_y(0, ZMIN), b,
-      screen_x(-width/2.0, ZMIN+height/2.0), screen_y(0, ZMIN+height/2.0), b,
-      screen_x(width/2.0, ZMIN+height/2.0), screen_y(0, ZMIN+height/2.0), b)
+      screen_x(-width/2.0, ZMIN+512), screen_y(0, ZMIN+512), b,
+      screen_x(width/2.0, ZMIN+512), screen_y(0, ZMIN+512), b)
 
     image.draw_as_quad(
       screen_x(@x-CHAR_HT/2, @z), screen_y(CHAR_HT, @z), clear,
