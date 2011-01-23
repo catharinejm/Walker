@@ -28,7 +28,7 @@ class Sam < Gosu::Window
       close
     when Gosu::MsLeft
       y = mouse_y
-      y = height/2.0+0.1 if y < height/2.0
+      y = height/2.0+0.1 if y <= height/2.0
       @dest_x = world_x(mouse_x, y)
       @dest_z = world_z(y)
 
@@ -142,7 +142,7 @@ class Sam < Gosu::Window
       screen_x(@x-CHAR_HT/2, @z), screen_y(CHAR_HT, @z), clear,
       screen_x(@x+CHAR_HT/2, @z), screen_y(CHAR_HT, @z), clear,
       screen_x(@x-CHAR_HT/2, @z), screen_y(0, @z), clear,
-      screen_x(@x+CHAR_HT/2, @z), screen_y(0, @z), clear, @z)
+      screen_x(@x+CHAR_HT/2, @z), screen_y(0, @z), clear, 0)
     # draw_triangle(
     #   screen_x(@x-CHAR_HT/2, @z), screen_y(0, @z), c,
     #   screen_x(@x+CHAR_HT/2, @z), screen_y(0, @z), c,
