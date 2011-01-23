@@ -1,4 +1,5 @@
 require 'gosu'
+require 'ostruct'
 
 class Sam < Gosu::Window
   STEP = 5
@@ -15,7 +16,7 @@ class Sam < Gosu::Window
     @x = @dest_x = 0
     @z = @dest_z = ZMIN
     @xstep = @zstep = 0
-    @directions = {:x => :left, :z => :down}
+    @directions = OpenStruct.new :x => :left, :z => :down
 
     @images = Gosu::Image.load_tiles(self, "player.png", -2, -4, false)
   end
@@ -42,6 +43,9 @@ class Sam < Gosu::Window
       @zstep = dz/(dz+dx)*STEP
       @xstep = dx/(dz+dx)*STEP
 
+      @moving_x = true
+      @moving_z = true
+
       printf "x:  %8.3f, dest_x: %8.3f, z:  %8.3f, dest_z: %8.3f\n", @x, @dest_x, @z, @dest_z
       printf "dx: %8.3f, xstep:  %8.3f, dz: %8.3f, zstep:  %8.3f\n\n", dx, @xstep, dz, @zstep
     end
@@ -55,6 +59,7 @@ class Sam < Gosu::Window
   def update
     if (@dest_x - @x).abs <= @xstep
       @x = @dest_x
+      @moving_x = false
     elsif @dest_x > @x
       @x += @xstep
     elsif @dest_x < @x
@@ -62,14 +67,15 @@ class Sam < Gosu::Window
     end
     if (@dest_z - @z).abs <= @zstep
       @z = @dest_z
+      @moving_z = false
     elsif @dest_z > @z
       @z += @zstep
     elsif @dest_z < @z
       @z -= @zstep
     end
 
-    if Time.now.to_f - @start_moving.to_f > 0.3
-      @step = @step.to_i + 1 
+    if (@moving_x || @moving_z) && Time.now.to_f - @start_moving.to_f > 0.3
+      @step = !@step
       @start_moving = Time.now
     end
 
@@ -93,37 +99,31 @@ class Sam < Gosu::Window
   end
 
   def direction
-    @directions[:x] =
-      if @dest_x < @x
-        :left
-      elsif @dest_x > @x
-        :right
-      else
-        @directions[:x]
-      end
+    if @dest_x < @x
+      @directions.x = :left
+    elsif @dest_x > @x
+      @directions.x = :right
+    end
 
-    @directions[:z] =
-      if @dest_z < @z
-        :down
-      elsif @dest_z > @z
-        :up
-      else
-        @directions[:z]
-      end
+    if @dest_z < @z
+      @directions.z = :down
+    elsif @dest_z > @z
+      @directions.z = :up
+    end
 
-    @xstep > (@zstep * 2) ? @directions[:x] : @directions[:z]
+    @xstep > (@zstep * 2) ? @directions.x : @directions.z
   end
 
   def image
     case direction
     when :left 
-      @images[6+@step%2]
+      @images[6+(@step ? 1 : 0)]
     when :up 
-      @images[2+@step%2]
+      @images[2+(@step ? 1 : 0)]
     when :right 
-      @images[4+@step%2]
+      @images[4+(@step ? 1 : 0)]
     else
-      @images[0+@step%2]
+      @images[0+(@step ? 1 : 0)]
     end
   end
 
