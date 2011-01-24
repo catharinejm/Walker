@@ -17,16 +17,16 @@ class Sprite < WorldObject
     clear = Gosu::Color::WHITE
 
     window.draw_quad(
-      screen_x(@x-width/2.0, @z), screen_y(height, @z), clear,
-      screen_x(@x+width/2.0, @z), screen_y(height, @z), clear,
-      screen_x(@x-width/2.0, @z), screen_y(0, @z), clear,
-      screen_x(@x+width/2.0, @z), screen_y(0, @z), clear, @z)
+      screen_x(left, front), screen_y(0, front), clear,
+      screen_x(right, front), screen_y(0, front), clear,
+      screen_x(left, back), screen_y(0, back), clear,
+      screen_x(right, back), screen_y(0, back), clear)
 
     image.draw_as_quad(
-      screen_x(@x-width/2.0, @z), screen_y(height, @z), clear,
-      screen_x(@x+width/2.0, @z), screen_y(height, @z), clear,
-      screen_x(@x-width/2.0, @z), screen_y(0, @z), clear,
-      screen_x(@x+width/2.0, @z), screen_y(0, @z), clear, @z)
+      screen_x(left, @z), screen_y(height, @z), clear,
+      screen_x(right, @z), screen_y(height, @z), clear,
+      screen_x(left, @z), screen_y(0, @z), clear,
+      screen_x(right, @z), screen_y(0, @z), clear, @z)
   end
 
   def update
