@@ -1,13 +1,14 @@
 class WorldObject
   attr_accessor :width, :height, :depth, :x, :y, :z
+  include Screen
   attr_reader :window
   def initialize window, width, height, depth, x, z
     @window = window
     @width = width
     @height = height
     @depth = depth
-    @x = @dest_x = x
-    @z = @dest_z = z + World::ZMIN
+    @x = x
+    @z = z + ZMIN
   end
 
   def screen_x(*args) window.screen_x(*args) end
