@@ -1,18 +1,18 @@
+require 'screen'
+
 class WorldObject
-  attr_accessor :width, :height, :depth, :x, :y, :z
   include Screen
+  attr_accessor :width, :height, :depth, :x, :z, :name
   attr_reader :window
-  def initialize window, width, height, depth, x, z
+  def initialize window, width, height, depth, x, z, name
     @window = window
     @width = width
     @height = height
     @depth = depth
     @x = x
     @z = z + ZMIN
+    @name = name
   end
-
-  def screen_x(*args) window.screen_x(*args) end
-  def screen_y(*args) window.screen_y(*args) end
 
   def front
     z - depth/2.0
@@ -28,6 +28,10 @@ class WorldObject
 
   def right
     x + width/2.0
+  end
+
+  def contains? x, y
+    (left..right).cover?(world_x(x, y)) && (front..back).cover?(world_z(y))
   end
 
   def draw

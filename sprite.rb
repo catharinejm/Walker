@@ -2,7 +2,7 @@ require 'world_object'
 
 class Sprite < WorldObject
   attr_accessor :step
-  def initialize win, w, h, d, x, z, image, cols, rows, step
+  def initialize win, w, h, d, x, z, name, image, cols, rows, step
     @step = step
     @cols = cols
     @rows = rows
@@ -10,7 +10,9 @@ class Sprite < WorldObject
     @images = Gosu::Image.load_tiles(win, image, -cols, -rows, false)
     @directions = OpenStruct.new :x => :left, :z => :down
     @xstep = @zstep = 0
-    super win, w, h, d, x, z
+    super win, w, h, d, x, z, name
+    @dest_x = @x
+    @dest_z = @z
   end
   
   def draw

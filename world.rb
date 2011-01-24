@@ -1,5 +1,6 @@
 require 'gosu'
 require 'ostruct'
+require 'screen'
 require 'world_object'
 require 'sprite'
 
@@ -8,8 +9,8 @@ class World < Gosu::Window
   def initialize
     super SWIDTH, SHEIGHT, false
 
-    @character = Sprite.new(self, 300, 300, 300, 0, 0, "player.png", 2, 4, 10)
-    @objects = [WorldObject.new(self, 100, 100, 100, 400, 400)]
+    @character = Sprite.new(self, 300, 300, 300, 0, 0, "Hiro", "player.png", 2, 4, 10)
+    @objects = [WorldObject.new(self, 100, 100, 100, 400, 400, "Cube")]
   end
 
   def needs_cursor?() true end
@@ -32,6 +33,11 @@ class World < Gosu::Window
 
   def update
     @character.update
+    @text = Gosu::Image.from_text(self, "x: #{mouse_x}, y: #{mouse_y}", "monaco", 36)
+    over = @objects.find { |o| o.contains? mouse_x, mouse_y }
+    over ||= @character if @character.contains? mouse_x, mouse_y
+    text = (over && over.name) || ''
+    @hover_text = Gosu::Image.from_text(self, text, "monaco", 36)
   end
 
   def draw
@@ -39,5 +45,7 @@ class World < Gosu::Window
     draw_quad(0, height, b, width, height, b, 0, height/2.0, b, width, height/2.0, b)
     @character.draw
     @objects.each(&:draw)
+    @text.draw(0, 0, 0)
+    @hover_text.draw(0, 40, 0)
   end
 end
