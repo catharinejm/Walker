@@ -31,7 +31,10 @@ class WorldObject
   end
 
   def contains? x, y
-    (left..right).cover?(world_x(x, y)) && (front..back).cover?(world_z(y))
+    # Really inefficient. :-/
+    0.upto(height) do |height|
+      break -1 if (left..right).cover?(world_x(x, y, height)) && (front..back).cover?(world_z(y, height))
+    end == -1
   end
 
   def draw

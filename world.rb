@@ -10,7 +10,8 @@ class World < Gosu::Window
     super SWIDTH, SHEIGHT, false
 
     @character = Sprite.new(self, 300, 300, 300, 0, 0, "Hiro", "player.png", 2, 4, 10)
-    @objects = [WorldObject.new(self, 100, 100, 100, 400, 400, "Cube")]
+    @objects = [WorldObject.new(self, 100, 100, 100, 400, 400, "Cube"),
+                WorldObject.new(self, 200, 200, 200, -300, 150, "Flumbert")]
   end
 
   def needs_cursor?() true end
