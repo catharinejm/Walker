@@ -2,7 +2,7 @@ module Screen
   SWIDTH = 1024
   SHEIGHT = 768
   RATIO = SWIDTH/SHEIGHT.to_f
-  FOV_X = 80 * Math::PI/180
+  FOV_X = 45 * Math::PI/180
   FOV_Y = FOV_X/RATIO
   ZMIN = SWIDTH/2.0/Math.tan(FOV_X/2.0)
 
