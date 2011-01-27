@@ -5,6 +5,7 @@ module Screen
   FOV_X = 45 * Math::PI/180
   FOV_Y = FOV_X/RATIO
   ZMIN = SWIDTH/2.0/Math.tan(FOV_X/2.0)
+  ZMAX = (SHEIGHT/2.0)*ZMIN / 0.1 # 0.1 could be smaller, but that's what we use to bound y in World.
 
   def screen_x wx, wz
     wx*ZMIN/wz + SWIDTH/2.0

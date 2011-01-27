@@ -47,27 +47,32 @@ class WorldObject
       screen_x(left, front), screen_y(0, front), red,
       screen_x(right, front), screen_y(0, front), red,
       screen_x(left, front), screen_y(height, front), red,
-      screen_x(right, front), screen_y(height, front), red)
+      screen_x(right, front), screen_y(height, front), red, z_index)
 
     # Top
     window.draw_quad(
       screen_x(left, front), screen_y(height, front), green,
       screen_x(right, front), screen_y(height, front), green,
       screen_x(left, back), screen_y(height, back), green,
-      screen_x(right, back), screen_y(height, back), green)
+      screen_x(right, back), screen_y(height, back), green, z_index)
 
     if x < 0
       window.draw_quad(
         screen_x(right, front), screen_y(0, front), yellow,
         screen_x(right, back), screen_y(0, back), yellow,
         screen_x(right, front), screen_y(height, front), yellow,
-        screen_x(right, back), screen_y(height, back), yellow)
+        screen_x(right, back), screen_y(height, back), yellow, z_index)
     elsif x > 0
       window.draw_quad(
         screen_x(left, front), screen_y(0, front), yellow,
         screen_x(left, back), screen_y(0, back), yellow,
         screen_x(left, front), screen_y(height, front), yellow,
-        screen_x(left, back), screen_y(height, back), yellow)
+        screen_x(left, back), screen_y(height, back), yellow, z_index)
     end
   end
+
+  private
+    def z_index
+      ZMAX - front
+    end
 end
