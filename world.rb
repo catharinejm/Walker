@@ -24,8 +24,7 @@ class World < Gosu::Window
       y = mouse_y
       y = height/2.0+HORIZON if y <= height/2.0
 
-      @obj_under_mouse = @objects.find { |o| o.contains? mouse_x, mouse_y }
-      @character.set_dest(world_x(mouse_x, y), world_z(y), @obj_under_mouse)
+      @character.set_dest(world_x(mouse_x, y), world_z(y), obj_under_mouse)
     end
     @start_moving = Time.now
   end
@@ -33,12 +32,22 @@ class World < Gosu::Window
   def button_up key
   end
 
+  def obj_under_mouse
+    unless @obj_under_mouse_determined
+      @obj_under_mouse = @objects.find { |o| o.contains? mouse_x, mouse_y }
+      @obj_under_mouse_determined = true
+    end
+    @obj_under_mouse
+  end
+
   def update
     @character.update
     @text = Gosu::Image.from_text(self, "x: #{mouse_x}, y: #{mouse_y}", "monaco", 36)
-    @obj_under_mouse ||= @character if @character.contains? mouse_x, mouse_y
-    text = (@obj_under_mouse && @obj_under_mouse.name) || ''
+    over = obj_under_mouse 
+    over ||= @character if @character.contains? mouse_x, mouse_y
+    text = (over && over.name) || ''
     @hover_text = Gosu::Image.from_text(self, text, "monaco", 36)
+    @obj_under_mouse_determined = false
   end
 
   def draw
