@@ -30,7 +30,7 @@ class WorldObject
     x + width/2.0
   end
 
-  def contains? x, y
+  def contains? wx, wz
     # Really inefficient. :-/
     0.upto(height) do |height|
       break -1 if (left..right).cover?(world_x(x, y, height)) && (front..back).cover?(world_z(y, height))

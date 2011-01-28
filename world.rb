@@ -22,9 +22,10 @@ class World < Gosu::Window
       close
     when Gosu::MsLeft
       y = mouse_y
-      y = height/2.0+0.1 if y <= height/2.0
+      y = height/2.0+HORIZON if y <= height/2.0
 
-      @character.set_dest(world_x(mouse_x, y), world_z(y))
+      @obj_under_mouse = @objects.find { |o| o.contains? mouse_x, mouse_y }
+      @character.set_dest(world_x(mouse_x, y), world_z(y), @obj_under_mouse)
     end
     @start_moving = Time.now
   end
@@ -35,9 +36,8 @@ class World < Gosu::Window
   def update
     @character.update
     @text = Gosu::Image.from_text(self, "x: #{mouse_x}, y: #{mouse_y}", "monaco", 36)
-    over = @objects.find { |o| o.contains? mouse_x, mouse_y }
-    over ||= @character if @character.contains? mouse_x, mouse_y
-    text = (over && over.name) || ''
+    @obj_under_mouse ||= @character if @character.contains? mouse_x, mouse_y
+    text = (@obj_under_mouse && @obj_under_mouse.name) || ''
     @hover_text = Gosu::Image.from_text(self, text, "monaco", 36)
   end
 

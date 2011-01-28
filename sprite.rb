@@ -31,38 +31,74 @@ class Sprite < WorldObject
       screen_x(right, @z), screen_y(0, @z), clear, z_index)
   end
 
+  def moving_left?()  @dest_x < @x end
+  def moving_right?()  @dest_x > @x end
+  def moving_back?() @dest_z > @z end
+  def moving_forward?() @dest_z < @x end
+
+  def moving?
+    @dest_x != @x || @dest_z != @z
+  end
+
   def update
     if (@dest_x - @x).abs <= @xstep
       @x = @dest_x
-      @moving_x = false
-    elsif @dest_x > @x
+    elsif moving_right?
       @x += @xstep
-    elsif @dest_x < @x
+    elsif moving_left?
       @x -= @xstep
     end
     if (@dest_z - @z).abs <= @zstep
       @z = @dest_z
-      @moving_z = false
-    elsif @dest_z > @z
+    elsif moving_back?
       @z += @zstep
-    elsif @dest_z < @z
+    elsif moving_forward?
       @z -= @zstep
     end
 
-    if (@moving_x || @moving_z) && Time.now.to_f - @start_moving.to_f > 0.3
+    if moving? && Time.now.to_f - @start_moving.to_f > 0.3
       @step_off = (@step_off + 1) % @cols
       @start_moving = Time.now
     end
   end
 
-  def set_dest dest_x, dest_z
-    @dest_x = dest_x
-    @dest_z = dest_z
+  def set_dest dest_x, dest_z, dest_obj
+    if dest_obj && dest_obj.contains?(dest_x, dest_z)
+      if @x < dest_x
+        if @x < dest_obj.left
+          @dest_x = dest_obj.left
+        else
+          @dest_x = dest_obj.x
+        end
+      elsif @x > dest_x
+        if @x > dest_obj.right
+          @dest_x = dest_obj.right
+        else
+          @dest_x = dest_obj.x
+        end
+      end
+      if @z < dest_z
+        if @z < dest_obj.front
+          @dest_z = dest_obj.front
+        else
+          @dest_z = dest_obj.z
+        end
+      elsif @z > dest_z
+        if @z > dest_obj.back
+          @dest_z = dest_obj.back
+        else
+          @dest_z = dest_obj.z
+        end
+      end
+    else
+      @dest_x = dest_x
+      @dest_z = dest_z
+    end
+
     dz = (@dest_z-@z).abs
     dx = (@dest_x-@x).abs
     @zstep = dz/(dz+dx)*step
     @xstep = dx/(dz+dx)*step
-    @moving_x = @moving_z = true
 
     printf "x:  %8.3f, dest_x: %8.3f, z:  %8.3f, dest_z: %8.3f\n", @x, @dest_x, @z, @dest_z
     printf "dx: %8.3f, xstep:  %8.3f, dz: %8.3f, zstep:  %8.3f\n\n", dx, @xstep, dz, @zstep
