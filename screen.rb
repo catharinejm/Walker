@@ -4,7 +4,7 @@ module Screen
   RATIO = SWIDTH/SHEIGHT.to_f
   FOV_X = 45 * Math::PI/180
   FOV_Y = FOV_X/RATIO
-  HORIZON = 0.1 # Somewhat misnamed, but this is the closest we'll allow y-coords to get to height/2
+  HORIZON = 0.1 # Somewhat misnamed, but this is the closest we'll allow screen y-coords to get to height/2
   ZMIN = SWIDTH/2.0/Math.tan(FOV_X/2.0)
   ZMAX = (SHEIGHT/2.0)*ZMIN / HORIZON
 
