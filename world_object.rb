@@ -1,7 +1,9 @@
 require 'screen'
+require 'go_around'
 
 class WorldObject
   include Screen
+  include GoAround
   attr_accessor :width, :height, :depth, :x, :z, :name
   attr_reader :window
   def initialize window, width, height, depth, x, z, name
@@ -14,21 +16,10 @@ class WorldObject
     @name = name
   end
 
-  def front
-    z - depth/2.0
-  end
-
-  def back
-    z + depth/2.0
-  end
-
-  def left
-    x - width/2.0
-  end
-
-  def right
-    x + width/2.0
-  end
+  def front() z - depth/2.0 end
+  def back() z + depth/2.0 end
+  def left() x - width/2.0 end
+  def right() x + width/2.0 end
 
   def contains? sx, sy
     # Really inefficient. :-/

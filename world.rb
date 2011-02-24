@@ -24,7 +24,7 @@ class World < Gosu::Window
       y = mouse_y
       y = height/2.0+HORIZON if y <= height/2.0
 
-      @character.set_dest(world_x(mouse_x, y), world_z(y), obj_under_mouse)
+      @character.register_click mouse_x, y, @objects
     end
     @start_moving = Time.now
   end
@@ -33,11 +33,7 @@ class World < Gosu::Window
   end
 
   def obj_under_mouse
-    unless @obj_under_mouse_determined
-      @obj_under_mouse = @objects.find { |o| o.contains? mouse_x, mouse_y }
-      @obj_under_mouse_determined = true
-    end
-    @obj_under_mouse
+    @obj_under_mouse ||= @objects.find { |o| o.contains? mouse_x, mouse_y }
   end
 
   def update
@@ -47,7 +43,7 @@ class World < Gosu::Window
     over ||= @character if @character.contains? mouse_x, mouse_y
     text = (over && over.name) || ''
     @hover_text = Gosu::Image.from_text(self, text, "monaco", 36)
-    @obj_under_mouse_determined = false
+    @obj_under_mouse = nil
   end
 
   def draw

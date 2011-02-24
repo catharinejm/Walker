@@ -13,6 +13,7 @@ class Sprite < WorldObject
     super win, w, h, d, x, z, name
     @dest_x = @x
     @dest_z = @z
+    @destinations = []
   end
   
   def draw
@@ -53,29 +54,52 @@ class Sprite < WorldObject
       @step_off = (@step_off + 1) % @cols
       @start_moving = Time.now
     end
+    
+    set_dest!
   end
 
-  def set_dest dest_x, dest_z, dest_obj
-    if dest_obj
+  def register_click mouse_x, mouse_y, objects
+    if dest_obj = objects.find { |o| o.contains? mouse_x, mouse_y }
       if @x < dest_obj.left
-        @dest_x = dest_obj.left
+        x = dest_obj.left
       elsif @x > dest_obj.right
-        @dest_x = dest_obj.right
+        x = dest_obj.right
       else
-        @dest_x = dest_obj.x
+        x = dest_obj.x
       end
       if @z < dest_obj.front
-        @dest_z = dest_obj.front
+        z = dest_obj.front
       elsif @z > dest_obj.back
-        @dest_z = dest_obj.back
+        z = dest_obj.back
       else
-        @dest_z = dest_obj.z
+        z = dest_obj.z
       end
     else
-      @dest_x = dest_x
-      @dest_z = dest_z
+      x = world_x(mouse_x, mouse_y)
+      z = world_z(mouse_y)
     end
+    @destinations.replace [[x, z]]
+    stx = @x
+    stz = @z
+    objects.each do |obj|
+      # debugger
+      @destinations.each_with_index do |(dx, dz), idx|
+        if obj.on_path? stx, stz, dx, dz
+          stx, stz = obj.nearest_corner stx, stz, dx, dz
+          @destinations.insert idx, [stx, stz]
+        else
+          stx = dx
+          stz = dz
+        end
+      end
+    end
+    @moving_x = @moving_z = false
+    set_dest!
+  end
 
+  def set_dest!
+    return if @moving_x || @moving_z || @destinations.empty?
+    @dest_x, @dest_z = @destinations.shift
     dz = (@dest_z-@z).abs
     dx = (@dest_x-@x).abs
     if (dz+dz).zero?
@@ -85,7 +109,6 @@ class Sprite < WorldObject
       @xstep = dx/(dz+dx)*step
       @moving_x = @moving_z = true
     end
-
 
     printf "x:  %8.3f, dest_x: %8.3f, z:  %8.3f, dest_z: %8.3f\n", @x, @dest_x, @z, @dest_z
     printf "dx: %8.3f, xstep:  %8.3f, dz: %8.3f, zstep:  %8.3f\n\n", dx, @xstep, dz, @zstep
