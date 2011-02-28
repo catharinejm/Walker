@@ -18,7 +18,7 @@ class World < Gosu::Window
 
   def button_down key
     case key
-    when Gosu::KbEscape
+    when Gosu::KbEscape, Gosu::KbQ
       close
     when Gosu::MsLeft
       y = mouse_y

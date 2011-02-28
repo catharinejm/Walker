@@ -2,7 +2,7 @@ require 'matrix'
 
 module GoAround
   def side_intx(stx, stz, edx, edz, side)
-    p stx, stz, edx, edz, side
+    # p stx, stz, edx, edz, side
     return nil unless [stx, side, edx].sort[1] == side
     pz_nmr =
       Matrix[
@@ -28,7 +28,7 @@ module GoAround
   end
 
   def fb_intx(stx, stz, edx, edz, fb)
-    p stx, stz, edx, edz, fb
+    # p stx, stz, edx, edz, fb
     return nil unless [stz, fb, edz].sort[1] == fb
     px_nmr =
       Matrix[

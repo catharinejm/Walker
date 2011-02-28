@@ -25,11 +25,25 @@ class Sprite < WorldObject
       screen_x(left, back), screen_y(0, back), clear,
       screen_x(right, back), screen_y(0, back), clear, z_index)
 
-    image.draw_as_quad(
-      screen_x(left, @z), screen_y(height, @z), clear,
-      screen_x(right, @z), screen_y(height, @z), clear,
-      screen_x(left, @z), screen_y(0, @z), clear,
-      screen_x(right, @z), screen_y(0, @z), clear, z_index)
+    # image.draw_as_quad(
+    #   screen_x(left, @z), screen_y(height, @z), clear,
+    #   screen_x(right, @z), screen_y(height, @z), clear,
+    #   screen_x(left, @z), screen_y(0, @z), clear,
+    #   screen_x(right, @z), screen_y(0, @z), clear, z_index)
+
+    c = Gosu::Color::GREEN
+    stx, stz = [@x, @z]
+    ([[@dest_x, @dest_z]] + @destinations).each do |dx, dz|
+      window.draw_quad(
+        screen_x(dx-5, dz-5), screen_y(0, dz-5), c,
+        screen_x(dx+5, dz-5), screen_y(0, dz-5), c,
+        screen_x(dx-5, dz+5), screen_y(0, dz+5), c,
+        screen_x(dx+5, dz+5), screen_y(0, dz+5), c, ZMAX)
+      window.draw_line(
+        screen_x(stx, stz), screen_y(0, stz), c,
+        screen_x(dx, dz), screen_y(0, dz), c, ZMAX)
+      stx, stz = [dx, dz]
+    end
   end
 
   def update
@@ -85,6 +99,7 @@ class Sprite < WorldObject
       # debugger
       @destinations.each_with_index do |(dx, dz), idx|
         if obj.on_path? stx, stz, dx, dz
+          puts "intersecting #{obj.name}"
           stx, stz = obj.nearest_corner stx, stz, dx, dz
           @destinations.insert idx, [stx, stz]
         else
@@ -99,10 +114,11 @@ class Sprite < WorldObject
 
   def set_dest!
     return if @moving_x || @moving_z || @destinations.empty?
+    puts "Setting destination!"
     @dest_x, @dest_z = @destinations.shift
     dz = (@dest_z-@z).abs
     dx = (@dest_x-@x).abs
-    if (dz+dz).zero?
+    if (dx+dz).zero?
       @zstep = @xstep = 0
     else
       @zstep = dz/(dz+dx)*step
