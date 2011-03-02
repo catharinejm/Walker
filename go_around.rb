@@ -61,6 +61,7 @@ module GoAround
   end
 
   def nearest_corner(stx, stz, edx, edz)
+    debugger
     li = left_intx(stx, stz, edx, edz)
     ri = right_intx(stx, stz, edx, edz)
     bi = back_intx(stx, stz, edx, edz)

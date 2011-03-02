@@ -93,10 +93,11 @@ class Sprite < WorldObject
       z = world_z(mouse_y)
     end
     @destinations.replace [[x, z]]
-    stx = @x
-    stz = @z
+    puts "Objects: #{objects.map(&:name).join(', ')}"
     objects.each do |obj|
       # debugger
+      stx = @x
+      stz = @z
       @destinations.each_with_index do |(dx, dz), idx|
         if obj.on_path? stx, stz, dx, dz
           puts "intersecting #{obj.name}"
