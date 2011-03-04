@@ -63,56 +63,24 @@ module GoAround
   def nearest_corner(stx, stz, edx, edz)
     li = left_intx(stx, stz, edx, edz)
     ri = right_intx(stx, stz, edx, edz)
-    bi = back_intx(stx, stz, edx, edz)
     fi = front_intx(stx, stz, edx, edz)
-    
-    if stx < edx
-      if stz < edz
-        x, z = fi || li
-      else
-        x, z = bi || li
-      end
-    else
-      if stz < edz
-        x, z = fi || ri
-      else
-        x, z = bi || ri
-      end
-    end
-    x = x > @x ? right+1 : left-1
-    z = z > @z ? front-1 : back+1
 
-    if stx == x && stz == z
-      if x == left-1
-        if z == back+1
-          if fi
-            z = front-1
-          else
-            x = right+1
-          end
-        else
-          if bi
-            z = back+1
-          else
-            x = right+1
-          end
-        end
+    if li
+      if ri
+        x = stx < edx ? left-1 : right+1
+        z = edz < @z ? front-1 : back+1
       else
-        if z == back+1
-          if fi
-            z = front-1
-          else
-            x = left-1
-          end
-        else
-          if bi
-            z = back+1
-          else
-            x = left-1
-          end
-        end
+        x = left-1
+        z = fi ? front-1 : back+1
       end
+    elsif ri
+      x = right+1
+      z = fi ? front-1 : back+1
+    else
+      x = edx < @x ? left-1 : right+1
+      z = stz < edz ? front-1 : back+1
     end
+
     [x, z]
   rescue
     debugger

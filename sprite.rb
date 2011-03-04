@@ -98,10 +98,9 @@ class Sprite < WorldObject
       # debugger
       stx = @x
       stz = @z
-      count = 0
       @destinations.each_with_index do |(dx, dz), idx|
         if obj.on_path? stx, stz, dx, dz
-          debugger if (count += 1) > 10
+          debugger if @destinations.size > objects.size*4+1
           puts "intersecting #{obj.name}"
           stx, stz = obj.nearest_corner stx, stz, dx, dz
           @destinations.insert idx, [stx, stz]
