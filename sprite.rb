@@ -75,16 +75,16 @@ class Sprite < WorldObject
   def register_click mouse_x, mouse_y, objects
     if dest_obj = objects.find { |o| o.contains? mouse_x, mouse_y }
       if @x < dest_obj.left
-        x = dest_obj.left
+        x = dest_obj.left-1
       elsif @x > dest_obj.right
-        x = dest_obj.right
+        x = dest_obj.right+1
       else
         x = dest_obj.x
       end
       if @z < dest_obj.front
-        z = dest_obj.front
+        z = dest_obj.front-1
       elsif @z > dest_obj.back
-        z = dest_obj.back
+        z = dest_obj.back+1
       else
         z = dest_obj.z
       end
@@ -98,8 +98,10 @@ class Sprite < WorldObject
       # debugger
       stx = @x
       stz = @z
+      count = 0
       @destinations.each_with_index do |(dx, dz), idx|
         if obj.on_path? stx, stz, dx, dz
+          debugger if (count += 1) > 10
           puts "intersecting #{obj.name}"
           stx, stz = obj.nearest_corner stx, stz, dx, dz
           @destinations.insert idx, [stx, stz]

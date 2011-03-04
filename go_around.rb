@@ -16,7 +16,7 @@ module GoAround
       ].det
 
     pz = pz_nmr/denom
-    pz >= back && pz <= front ? [side, pz] : nil
+    pz <= back && pz >= front ? [side, pz] : nil
   end
 
   def left_intx(stx, stz, edx, edz)
@@ -61,7 +61,6 @@ module GoAround
   end
 
   def nearest_corner(stx, stz, edx, edz)
-    debugger
     li = left_intx(stx, stz, edx, edz)
     ri = right_intx(stx, stz, edx, edz)
     bi = back_intx(stx, stz, edx, edz)
@@ -69,45 +68,45 @@ module GoAround
     
     if stx < edx
       if stz < edz
-        x, z = bi || li
-      else
         x, z = fi || li
+      else
+        x, z = bi || li
       end
     else
       if stz < edz
-        x, z = bi || ri
-      else
         x, z = fi || ri
+      else
+        x, z = bi || ri
       end
     end
     x = x > @x ? right+1 : left-1
-    z = z > @z ? front+1 : back-1
+    z = z > @z ? front-1 : back+1
 
     if stx == x && stz == z
       if x == left-1
-        if z == back-1
+        if z == back+1
           if fi
-            z = front+1
+            z = front-1
           else
             x = right+1
           end
         else
           if bi
-            z = back-1
+            z = back+1
           else
             x = right+1
           end
         end
       else
-        if z == back-1
+        if z == back+1
           if fi
-            z = front+1
+            z = front-1
           else
             x = left-1
           end
         else
           if bi
-            z = back-1
+            z = back+1
           else
             x = left-1
           end
@@ -115,5 +114,8 @@ module GoAround
       end
     end
     [x, z]
+  rescue
+    debugger
+    retry
   end
 end
