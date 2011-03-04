@@ -34,9 +34,8 @@ class WorldObject
     end == -1
   end
 
-  def in_footprint? sx, sy
-    (padded_left..padded_right).cover?(world_x(sx, sy, 0)) &&
-      (padded_front..padded_back).cover?(world_z(sy, 0))
+  def in_footprint? x, z
+    (padded_left..padded_right).cover?(x) && (padded_front..padded_back).cover?(z)
   end
 
   def draw

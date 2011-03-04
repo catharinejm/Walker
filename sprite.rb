@@ -77,22 +77,7 @@ class Sprite < WorldObject
   def register_click mouse_x, mouse_y, objects
     x = world_x(mouse_x, mouse_y)
     z = world_z(mouse_y)
-    if dest_obj = objects.find { |o| o.contains? mouse_x, mouse_y }
-      if @x < dest_obj.padded_left
-        x = dest_obj.padded_left-1
-      elsif @x > dest_obj.padded_right
-        x = dest_obj.padded_right+1
-      else
-        x = dest_obj.x
-      end
-      if @z < dest_obj.padded_front
-        z = dest_obj.padded_front-1
-      elsif @z > dest_obj.padded_back
-        z = dest_obj.padded_back+1
-      else
-        z = dest_obj.z
-      end
-    elsif dest_obj = objects.find { |o| o.in_footprint? mouse_x, mouse_y }
+    if dest_obj = objects.find { |o| o.in_footprint? x, z }
       if dest_obj.padded_left < x && x < dest_obj.left
         x = dest_obj.padded_left-1
       elsif dest_obj.padded_right > x && x > dest_obj.right
