@@ -7,24 +7,24 @@ module GoAround
     pz_nmr =
       Matrix[
         [Matrix[[stx,stz],[edx,edz]].det, Matrix[[stz,1],[edz,1]].det],
-        [Matrix[[side,back],[side,front]].det, Matrix[[back,1],[front,1]].det]
+        [Matrix[[side,padded_back],[side,padded_front]].det, Matrix[[padded_back,1],[padded_front,1]].det]
       ].det
     denom =
       Matrix[
         [Matrix[[stx,1],[edx,1]].det, Matrix[[stz,1],[edz,1]].det],
-        [Matrix[[side,1],[side,1]].det, Matrix[[back,1],[front,1]].det]
+        [Matrix[[side,1],[side,1]].det, Matrix[[padded_back,1],[padded_front,1]].det]
       ].det
 
     pz = pz_nmr/denom
-    pz <= back && pz >= front ? [side, pz] : nil
+    pz <= padded_back && pz >= padded_front ? [side, pz] : nil
   end
 
   def left_intx(stx, stz, edx, edz)
-    side_intx(stx, stz, edx, edz, left)
+    side_intx(stx, stz, edx, edz, padded_left)
   end
 
   def right_intx(stx, stz, edx, edz)
-    side_intx(stx, stz, edx, edz, right)
+    side_intx(stx, stz, edx, edz, padded_right)
   end
 
   def fb_intx(stx, stz, edx, edz, fb)
@@ -33,24 +33,24 @@ module GoAround
     px_nmr =
       Matrix[
         [Matrix[[stx,stz],[edx,edz]].det, Matrix[[stx,1],[edx,1]].det],
-        [Matrix[[left,fb],[right,fb]].det, Matrix[[left,1],[right,1]].det]
+        [Matrix[[padded_left,fb],[padded_right,fb]].det, Matrix[[padded_left,1],[padded_right,1]].det]
       ].det
     denom =
       Matrix[
         [Matrix[[stx,1],[edx,1]].det, Matrix[[stz,1],[edz,1]].det],
-        [Matrix[[left,1],[right,1]].det, Matrix[[fb,1],[fb,1]].det]
+        [Matrix[[padded_left,1],[padded_right,1]].det, Matrix[[fb,1],[fb,1]].det]
       ].det
 
     px = px_nmr/denom
-    px >= left && px <= right ? [px, fb] : nil
+    px >= padded_left && px <= padded_right ? [px, fb] : nil
   end
 
   def back_intx(stx, stz, edx, edz)
-    fb_intx(stx, stz, edx, edz, back)
+    fb_intx(stx, stz, edx, edz, padded_back)
   end
 
   def front_intx(stx, stz, edx, edz)
-    fb_intx(stx, stz, edx, edz, front)
+    fb_intx(stx, stz, edx, edz, padded_front)
   end
 
   def on_path?(stx, stz, edx, edz)
@@ -67,18 +67,18 @@ module GoAround
 
     if li
       if ri
-        x = stx < edx ? left-1 : right+1
-        z = edz < @z ? front-1 : back+1
+        x = stx < edx ? padded_left-1 : padded_right+1
+        z = edz < @z ? padded_front-1 : padded_back+1
       else
-        x = left-1
-        z = fi ? front-1 : back+1
+        x = padded_left-1
+        z = fi ? padded_front-1 : padded_back+1
       end
     elsif ri
-      x = right+1
-      z = fi ? front-1 : back+1
+      x = padded_right+1
+      z = fi ? padded_front-1 : padded_back+1
     else
-      x = edx < @x ? left-1 : right+1
-      z = stz < edz ? front-1 : back+1
+      x = edx < @x ? padded_left-1 : padded_right+1
+      z = stz < edz ? padded_front-1 : padded_back+1
     end
 
     [x, z]

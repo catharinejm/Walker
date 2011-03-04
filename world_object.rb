@@ -4,9 +4,9 @@ require 'go_around'
 class WorldObject
   include Screen
   include GoAround
-  attr_accessor :width, :height, :depth, :x, :z, :name
+  attr_accessor :width, :height, :depth, :x, :z, :name, :padding
   attr_reader :window
-  def initialize window, width, height, depth, x, z, name
+  def initialize window, width, height, depth, x, z, name, padding=0
     @window = window
     @width = width
     @height = height
@@ -14,6 +14,7 @@ class WorldObject
     @x = x
     @z = z + ZMIN
     @name = name
+    @padding = padding
   end
 
   def front() z - depth/2.0 end
@@ -21,11 +22,22 @@ class WorldObject
   def left() x - width/2.0 end
   def right() x + width/2.0 end
 
+  def padded_front() front - padding end
+  def padded_back() back + padding end
+  def padded_left() left - padding end
+  def padded_right() right + padding end
+
   def contains? sx, sy
     # Really inefficient. :-/
     0.upto(height) do |height|
       break -1 if (left..right).cover?(world_x(sx, sy, height)) && (front..back).cover?(world_z(sy, height))
     end == -1
+  end
+
+  def padded_contains? sx, sy
+    contains?(sx, sy) || 
+      (padded_left..padded_right).cover?(world_x(sx, sy, 0)) &&
+      (padded_front..padded_back).cover?(world_z(sy, 0))
   end
 
   def draw
