@@ -83,7 +83,11 @@ module GoAround
 
     [x, z]
   rescue
-    debugger
-    retry
+    if $__debug_mode__
+      debugger
+      retry
+    else
+      raise
+    end
   end
 end

@@ -25,11 +25,13 @@ class Sprite < WorldObject
       screen_x(left, back), screen_y(0, back), clear,
       screen_x(right, back), screen_y(0, back), clear, z_index)
 
-    # image.draw_as_quad(
-    #   screen_x(left, @z), screen_y(height, @z), clear,
-    #   screen_x(right, @z), screen_y(height, @z), clear,
-    #   screen_x(left, @z), screen_y(0, @z), clear,
-    #   screen_x(right, @z), screen_y(0, @z), clear, z_index)
+    unless $__debug_mode__
+      image.draw_as_quad(
+        screen_x(left, @z), screen_y(height, @z), clear,
+        screen_x(right, @z), screen_y(height, @z), clear,
+        screen_x(left, @z), screen_y(0, @z), clear,
+        screen_x(right, @z), screen_y(0, @z), clear, z_index)
+    end
 
     c = Gosu::Color::GREEN
     stx, stz = [@x, @z]
@@ -105,12 +107,11 @@ class Sprite < WorldObject
     @destinations.replace [[x, z]]
     puts "Objects: #{objects.map(&:name).join(', ')}"
     objects.each do |obj|
-      # debugger
       stx = @x
       stz = @z
       @destinations.each_with_index do |(dx, dz), idx|
         if obj.on_path? stx, stz, dx, dz
-          debugger if @destinations.size > objects.size*4+1
+          debugger if $__debug_mode__ && @destinations.size > objects.size*4+1
           puts "intersecting #{obj.name}"
           stx, stz = obj.nearest_corner stx, stz, dx, dz
           @destinations.insert idx, [stx, stz]

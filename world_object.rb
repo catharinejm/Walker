@@ -45,39 +45,41 @@ class WorldObject
     yellow = Gosu::Color::YELLOW
 
     # Draw bottom (just to debug)
-    window.draw_quad(
-      screen_x(left, front), screen_y(0, front), red,
-      screen_x(right, front), screen_y(0, front), red,
-      screen_x(left, back), screen_y(0, back), red,
-      screen_x(right, back), screen_y(0, back), red, z_index)
+    if $__debug_mode__
+      window.draw_quad(
+        screen_x(left, front), screen_y(0, front), red,
+        screen_x(right, front), screen_y(0, front), red,
+        screen_x(left, back), screen_y(0, back), red,
+        screen_x(right, back), screen_y(0, back), red, z_index)
+    else
+      # Front
+      window.draw_quad(
+        screen_x(left, front), screen_y(0, front), red,
+        screen_x(right, front), screen_y(0, front), red,
+        screen_x(left, front), screen_y(height, front), red,
+        screen_x(right, front), screen_y(height, front), red, z_index)
 
-    # # Front
-    # window.draw_quad(
-    #   screen_x(left, front), screen_y(0, front), red,
-    #   screen_x(right, front), screen_y(0, front), red,
-    #   screen_x(left, front), screen_y(height, front), red,
-    #   screen_x(right, front), screen_y(height, front), red, z_index)
+      # Top
+      window.draw_quad(
+        screen_x(left, front), screen_y(height, front), green,
+        screen_x(right, front), screen_y(height, front), green,
+        screen_x(left, back), screen_y(height, back), green,
+        screen_x(right, back), screen_y(height, back), green, z_index)
 
-    # # Top
-    # window.draw_quad(
-    #   screen_x(left, front), screen_y(height, front), green,
-    #   screen_x(right, front), screen_y(height, front), green,
-    #   screen_x(left, back), screen_y(height, back), green,
-    #   screen_x(right, back), screen_y(height, back), green, z_index)
-
-    # if x < 0
-    #   window.draw_quad(
-    #     screen_x(right, front), screen_y(0, front), yellow,
-    #     screen_x(right, back), screen_y(0, back), yellow,
-    #     screen_x(right, front), screen_y(height, front), yellow,
-    #     screen_x(right, back), screen_y(height, back), yellow, z_index)
-    # elsif x > 0
-    #   window.draw_quad(
-    #     screen_x(left, front), screen_y(0, front), yellow,
-    #     screen_x(left, back), screen_y(0, back), yellow,
-    #     screen_x(left, front), screen_y(height, front), yellow,
-    #     screen_x(left, back), screen_y(height, back), yellow, z_index)
-    # end
+      if x < 0
+        window.draw_quad(
+          screen_x(right, front), screen_y(0, front), yellow,
+          screen_x(right, back), screen_y(0, back), yellow,
+          screen_x(right, front), screen_y(height, front), yellow,
+          screen_x(right, back), screen_y(height, back), yellow, z_index)
+      elsif x > 0
+        window.draw_quad(
+          screen_x(left, front), screen_y(0, front), yellow,
+          screen_x(left, back), screen_y(0, back), yellow,
+          screen_x(left, front), screen_y(height, front), yellow,
+          screen_x(left, back), screen_y(height, back), yellow, z_index)
+      end
+    end
   end
 
   private

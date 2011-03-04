@@ -20,6 +20,9 @@ class World < Gosu::Window
     case key
     when Gosu::KbEscape, Gosu::KbQ
       close
+    when Gosu::KbD
+      require 'ruby-debug'
+      $__debug_mode__ = !$__debug_mode__
     when Gosu::MsLeft
       y = mouse_y
       y = height/2.0+HORIZON if y <= height/2.0
@@ -53,5 +56,6 @@ class World < Gosu::Window
     @objects.each(&:draw)
     @text.draw(0, 0, 0)
     @hover_text.draw(0, 40, 0)
+    Gosu::Image.from_text(self, "DEBUG", "monaco", 36).draw(width-100, 0, 0) if $__debug_mode__
   end
 end
