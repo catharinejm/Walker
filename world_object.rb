@@ -34,9 +34,8 @@ class WorldObject
     end == -1
   end
 
-  def padded_contains? sx, sy
-    contains?(sx, sy) || 
-      (padded_left..padded_right).cover?(world_x(sx, sy, 0)) &&
+  def in_footprint? sx, sy
+    (padded_left..padded_right).cover?(world_x(sx, sy, 0)) &&
       (padded_front..padded_back).cover?(world_z(sy, 0))
   end
 

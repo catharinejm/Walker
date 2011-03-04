@@ -73,7 +73,9 @@ class Sprite < WorldObject
   end
 
   def register_click mouse_x, mouse_y, objects
-    if dest_obj = objects.find { |o| o.padded_contains? mouse_x, mouse_y }
+    x = world_x(mouse_x, mouse_y)
+    z = world_z(mouse_y)
+    if dest_obj = objects.find { |o| o.contains? mouse_x, mouse_y }
       if @x < dest_obj.padded_left
         x = dest_obj.padded_left-1
       elsif @x > dest_obj.padded_right
@@ -88,9 +90,17 @@ class Sprite < WorldObject
       else
         z = dest_obj.z
       end
-    else
-      x = world_x(mouse_x, mouse_y)
-      z = world_z(mouse_y)
+    elsif dest_obj = objects.find { |o| o.in_footprint? mouse_x, mouse_y }
+      if dest_obj.padded_left < x && x < dest_obj.left
+        x = dest_obj.padded_left-1
+      elsif dest_obj.padded_right > x && x > dest_obj.right
+        x = dest_obj.padded_right + 1
+      end
+      if dest_obj.padded_front < z && z < dest_obj.front
+        z = dest_obj.padded_front-1
+      elsif dest_obj.padded_back > z && z > dest_obj.back
+        z = dest_obj.padded_back+1
+      end
     end
     @destinations.replace [[x, z]]
     puts "Objects: #{objects.map(&:name).join(', ')}"
