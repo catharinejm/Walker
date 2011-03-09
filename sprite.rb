@@ -77,17 +77,11 @@ class Sprite < WorldObject
   def register_click mouse_x, mouse_y, objects
     x = world_x(mouse_x, mouse_y)
     z = world_z(mouse_y)
+    debugger if $__debug_mode__
     if dest_obj = objects.find { |o| o.in_footprint? x, z }
-      if dest_obj.padded_left < x && x < dest_obj.left
-        x = dest_obj.padded_left-1
-      elsif dest_obj.padded_right > x && x > dest_obj.right
-        x = dest_obj.padded_right + 1
-      end
-      if dest_obj.padded_front < z && z < dest_obj.front
-        z = dest_obj.padded_front-1
-      elsif dest_obj.padded_back > z && z > dest_obj.back
-        z = dest_obj.padded_back+1
-      end
+      x, z = dest_obj.on_path? @x, @z, x, z
+      x += (x == dest_obj.padded_left ? -1 : 1)
+      z += (z == dest_obj.padded_front ? -1 : 1)
     end
     @destinations.replace [[x, z]]
     puts "Objects: #{objects.map(&:name).join(', ')}"
