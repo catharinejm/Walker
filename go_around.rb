@@ -3,7 +3,7 @@ require 'matrix'
 module GoAround
   def side_intx(stx, stz, edx, edz, side)
     # p stx, stz, edx, edz, side
-    return nil unless [stx, side, edx].sort[1] == side
+    return nil unless [stx, side, edx].sort[1] == side || in_footprint?(edx, edz)
     pz_nmr =
       Matrix[
         [Matrix[[stx,stz],[edx,edz]].det, Matrix[[stz,1],[edz,1]].det],
@@ -29,7 +29,7 @@ module GoAround
 
   def fb_intx(stx, stz, edx, edz, fb)
     # p stx, stz, edx, edz, fb
-    return nil unless [stz, fb, edz].sort[1] == fb
+    return nil unless [stz, fb, edz].sort[1] == fb || in_footprint?(edx, edz)
     px_nmr =
       Matrix[
         [Matrix[[stx,stz],[edx,edz]].det, Matrix[[stx,1],[edx,1]].det],

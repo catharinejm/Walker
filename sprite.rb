@@ -77,7 +77,6 @@ class Sprite < WorldObject
   def register_click mouse_x, mouse_y, objects
     x = world_x(mouse_x, mouse_y)
     z = world_z(mouse_y)
-    debugger if $__debug_mode__
     if dest_obj = objects.find { |o| o.in_footprint? x, z }
       x, z = dest_obj.on_path? @x, @z, x, z
       x += (x == dest_obj.padded_left ? -1 : 1)
